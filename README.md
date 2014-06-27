@@ -1,4 +1,4 @@
 dzedit
 ======
 
-le text editor
+officially the worst text editor ever
