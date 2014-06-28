@@ -90,9 +90,8 @@ public final class DzEdit {
 		saveItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if (!"disabled".equals(event.getActionCommand())) {
+				if (!"disabled".equals(event.getActionCommand()))
 					save();
-				}
 			}
 		});
 
@@ -101,9 +100,8 @@ public final class DzEdit {
 			public void actionPerformed(ActionEvent event) {
 				JFileChooser choose = new JFileChooser();
 				int val = choose.showOpenDialog(frame);
-				if (val == JFileChooser.APPROVE_OPTION) {
+				if (val == JFileChooser.APPROVE_OPTION)
 					saveAs(choose.getSelectedFile());
-				}
 			}
 		});
 
@@ -132,11 +130,11 @@ public final class DzEdit {
 
 	private void listenForCommands(final Scanner scanner) {
 		final String line = scanner.nextLine();
-		if (line.equalsIgnoreCase("close")) {
+		if (line.equalsIgnoreCase("close"))
 			return;
-		} else if (line.equalsIgnoreCase("save")) {
+		else if (line.equalsIgnoreCase("save"))
 			save();
-		} else if (line.startsWith("saveas")) {
+		else if (line.startsWith("saveas")) {
 			final String[] split = line.split(" ");
 			String filename = null;
 			try {
@@ -171,15 +169,13 @@ public final class DzEdit {
 	private void open(final File open) {
 		final List<String> lines = readLines(open);
 		final StringBuilder sb = new StringBuilder();
-		for (String line : lines) {
+		for (String line : lines)
 			sb.append(line).append("\n");
-		}
 		textArea.setText(sb.toString());
 		opened = open;
 		defDir = open.getParentFile();
-		if (defDir == null) {
+		if (defDir == null)
 			defDir = new File("./");
-		}
 		System.out.println("Opened file: " + opened.getName());
 		lastSaved = textArea.getText();
 	}
@@ -189,9 +185,9 @@ public final class DzEdit {
 	}
 
 	private void saveAs(final File destination) {
-		if (!writeFile(destination, textArea.getText())) {
+		if (!writeFile(destination, textArea.getText()))
 			System.out.println("ERROR: COULD NOT SAVE FILE");
-		} else {
+		else {
 			System.out.println("Saved contents to file: "
 					+ destination.getName());
 			open(destination);
@@ -205,9 +201,8 @@ public final class DzEdit {
 
 	private String listToString(final List<String> list, final String separator) {
 		final StringBuilder sb = new StringBuilder();
-		for (String string : list) {
+		for (String string : list)
 			sb.append(string).append(separator);
-		}
 		return sb.toString();
 	}
 
@@ -217,29 +212,26 @@ public final class DzEdit {
 		try {
 			br = new BufferedReader(new FileReader(f));
 			String s = null;
-			while ((s = br.readLine()) != null) {
+			while ((s = br.readLine()) != null)
 				result.add(s);
-			}
 			br.close();
 		} catch (IOException e) {
-			if (br != null) {
+			if (br != null)
 				try {
 					br.close();
 				} catch (IOException ignore) {
 				}
-			}
 			e.printStackTrace();
 		}
 		return result;
 	}
 
 	private static boolean writeFile(final File out, final String contents) {
-		if (!out.exists()) {
+		if (!out.exists())
 			try {
 				out.createNewFile();
 			} catch (IOException e) {
 			}
-		}
 		boolean result = false;
 		BufferedWriter writer = null;
 		try {
@@ -249,12 +241,11 @@ public final class DzEdit {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (writer != null) {
+			if (writer != null)
 				try {
 					writer.close();
 				} catch (IOException ignore) {
 				}
-			}
 		}
 		return result;
 	}
