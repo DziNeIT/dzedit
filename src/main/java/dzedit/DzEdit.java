@@ -24,17 +24,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
-/**
- * The worst text editor ever:
- * 
- * - Works via command line commands to open and save files! - Only has support
- * for editing one file at a time! - Extremely badly written!
- */
 public final class DzEdit {
 	private final JFrame frame;
 	private final JTextArea textArea;
-
-	// Menu
 	private final JMenuBar menuBar;
 	private final JMenu fileMenu;
 	private final JMenuItem openItem;
@@ -45,9 +37,6 @@ public final class DzEdit {
 	private File defDir;
 	private String lastSaved;
 
-	/**
-	 * Create a new DzEdit... Although I don't see why you'd want to
-	 */
 	private DzEdit() {
 		frame = new JFrame("DzEdit");
 		Container cp = frame.getContentPane();
@@ -136,19 +125,11 @@ public final class DzEdit {
 		final Scanner scanner = new Scanner(System.in);
 		listenForCommands(scanner);
 
-		// Only gets here when listenForCommands loop returns
-		// This only happens if the user enters 'close'
 		scanner.close();
 		frame.dispose();
 		System.exit(0);
 	}
 
-	/**
-	 * Listens for commands. Executes commands. Repeats.
-	 * 
-	 * @param scanner
-	 *            The scanner for scanning
-	 */
 	private void listenForCommands(final Scanner scanner) {
 		final String line = scanner.nextLine();
 		if (line.equalsIgnoreCase("close")) {
