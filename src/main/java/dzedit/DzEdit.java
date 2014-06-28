@@ -5,12 +5,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,13 +30,12 @@ public final class DzEdit {
 	private final JMenuItem saveItem;
 	private final JMenuItem saveAsItem;
 
-	private File opened;
-	private File defDir;
-	private String lastSaved;
+	private File file;
+	private String last;
 
 	private DzEdit() {
 		frame = new JFrame("DzEdit");
-		Container cp = frame.getContentPane();
+		final Container cp = frame.getContentPane();
 
 		menuBar = new JMenuBar();
 		fileMenu = new JMenu("File");
@@ -60,8 +56,8 @@ public final class DzEdit {
 				int val = choose.showOpenDialog(frame);
 				if (val == JFileChooser.APPROVE_OPTION) {
 					boolean goAhead = true;
-					if (lastSaved != null && textArea.getText() != null
-							&& !lastSaved.equals(textArea.getText())) {
+					if (last != null && textArea.getText() != null
+							&& !last.equals(textArea.getText())) {
 						final int n = JOptionPane
 								.showOptionDialog(
 										frame,
@@ -120,68 +116,61 @@ public final class DzEdit {
 		frame.pack();
 		frame.setVisible(true);
 
-		final Scanner scanner = new Scanner(System.in);
-		listenForCommands(scanner);
+		final Scanner sc = new Scanner(System.in);
+		listenForCommands(sc);
 
-		scanner.close();
+		sc.close();
 		frame.dispose();
 		System.exit(0);
 	}
 
-	private void listenForCommands(final Scanner scanner) {
-		final String line = scanner.nextLine();
-		if (line.equalsIgnoreCase("close"))
+	private void listenForCommands(final Scanner sc) {
+		final String ln = sc.nextLine();
+		if (ln.equalsIgnoreCase("close"))
 			return;
-		else if (line.equalsIgnoreCase("save"))
+		else if (ln.equalsIgnoreCase("save"))
 			save();
-		else if (line.startsWith("saveas")) {
-			final String[] split = line.split(" ");
-			String filename = null;
+		else if (ln.startsWith("saveas")) {
+			final String[] s = ln.split(" ");
+			String f = null;
 			try {
-				filename = split[1];
-			} catch (ArrayIndexOutOfBoundsException e) {
+				f = s[1];
+			} catch (final ArrayIndexOutOfBoundsException e) {
 				System.out
 						.println("Must specify filename after command 'saveas'");
 			}
-			if (filename != null) {
-				final List<String> sl = new ArrayList<>(Arrays.asList(split));
-				sl.remove(0);
-				saveAs(new File(listToString(sl, " ")));
+			if (f != null) {
+				final List<String> l = new ArrayList<>(Arrays.asList(s));
+				l.remove(0);
+				saveAs(new File(listToString(l, " ")));
 			}
-		} else if (line.startsWith("open")) {
-			final String[] split = line.split(" ");
-			String filename = null;
+		} else if (ln.startsWith("open")) {
+			final String[] s = ln.split(" ");
+			String f = null;
 			try {
-				filename = split[1];
-			} catch (ArrayIndexOutOfBoundsException e) {
+				f = s[1];
+			} catch (final ArrayIndexOutOfBoundsException e) {
 				System.out
 						.println("Must specify filename after command 'open'");
 			}
-			if (filename != null) {
-				final List<String> sl = new ArrayList<>(Arrays.asList(split));
-				sl.remove(0);
-				open(new File(listToString(sl, " ")));
+			if (f != null) {
+				final List<String> l = new ArrayList<>(Arrays.asList(s));
+				l.remove(0);
+				open(new File(listToString(l, " ")));
 			}
 		}
-		listenForCommands(scanner);
+		listenForCommands(sc);
 	}
 
-	private void open(final File open) {
-		final List<String> lines = readLines(open);
-		final StringBuilder sb = new StringBuilder();
-		for (String line : lines)
-			sb.append(line).append("\n");
-		textArea.setText(sb.toString());
-		opened = open;
-		defDir = open.getParentFile();
-		if (defDir == null)
-			defDir = new File("./");
-		System.out.println("Opened file: " + opened.getName());
-		lastSaved = textArea.getText();
+	private void open(final File f) {
+		textArea.setText(read(f));
+		file = f;
+		System.out.println("Opened file: " + file.getName());
+		last = textArea.getText();
 	}
 
 	private void save() {
-		saveAs(opened);
+		saveAs(file);
 	}
 
 	private void saveAs(final File destination) {
@@ -192,7 +181,7 @@ public final class DzEdit {
 					+ destination.getName());
 			open(destination);
 		}
-		lastSaved = textArea.getText();
+		last = textArea.getText();
 	}
 
 	public static void main(String[] args) {
@@ -201,52 +190,25 @@ public final class DzEdit {
 
 	private String listToString(final List<String> list, final String separator) {
 		final StringBuilder sb = new StringBuilder();
-		for (String string : list)
+		for (final String string : list)
 			sb.append(string).append(separator);
 		return sb.toString();
 	}
 
-	private static List<String> readLines(final File f) {
-		final List<String> result = new ArrayList<String>();
-		BufferedReader br = null;
+	private static String read(final File f) {
 		try {
-			br = new BufferedReader(new FileReader(f));
-			String s = null;
-			while ((s = br.readLine()) != null)
-				result.add(s);
-			br.close();
-		} catch (IOException e) {
-			if (br != null)
-				try {
-					br.close();
-				} catch (IOException ignore) {
-				}
-			e.printStackTrace();
+			return new String(Files.readAllBytes(f.toPath()));
+		} catch (final IOException e) {
+			return null;
 		}
-		return result;
 	}
 
-	private static boolean writeFile(final File out, final String contents) {
-		if (!out.exists())
-			try {
-				out.createNewFile();
-			} catch (IOException e) {
-			}
-		boolean result = false;
-		BufferedWriter writer = null;
+	private static boolean writeFile(final File f, final String s) {
 		try {
-			writer = new BufferedWriter(new FileWriter(out));
-			writer.write(contents);
-			result = true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (writer != null)
-				try {
-					writer.close();
-				} catch (IOException ignore) {
-				}
+			Files.write(f.toPath(), s.getBytes());
+			return true;
+		} catch (final IOException e) {
+			return false;
 		}
-		return result;
 	}
 }
