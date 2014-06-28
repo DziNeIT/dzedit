@@ -35,13 +35,14 @@ import javax.swing.JTextArea;
  * TODO: Add functionality to the bar at the top lol
  */
 public final class DzEdit {
+	private final JFrame frame;
+	private final Container cp;
+	private final JTextArea jta;
+	private final JMenuBar mb;
+	private final JMenu jm;
+
 	private File opened;
 	private File defDir;
-	private JFrame frame;
-	private Container cp;
-	private JTextArea jta;
-	private JMenuBar mb;
-	private JMenu jm;
 
 	/**
 	 * Create a new DzEdit... Although I don't see why you'd want to
@@ -67,7 +68,7 @@ public final class DzEdit {
 		frame.pack();
 		frame.setVisible(true);
 
-		Scanner scanner = new Scanner(System.in);
+		final Scanner scanner = new Scanner(System.in);
 		listenForCommands(scanner);
 
 		// Only gets here when listenForCommands loop returns
@@ -83,14 +84,14 @@ public final class DzEdit {
 	 * @param scanner
 	 *            The scanner for scanning
 	 */
-	private void listenForCommands(Scanner scanner) {
-		String line = scanner.nextLine();
+	private void listenForCommands(final Scanner scanner) {
+		final String line = scanner.nextLine();
 		if (line.equalsIgnoreCase("close")) {
 			return;
 		} else if (line.equalsIgnoreCase("save")) {
 			save();
 		} else if (line.startsWith("saveas")) {
-			String[] split = line.split(" ");
+			final String[] split = line.split(" ");
 			String filename = null;
 			try {
 				filename = split[1];
@@ -99,12 +100,12 @@ public final class DzEdit {
 						.println("Must specify filename after command 'saveas'");
 			}
 			if (filename != null) {
-				List<String> sl = new ArrayList<>(Arrays.asList(split));
+				final List<String> sl = new ArrayList<>(Arrays.asList(split));
 				sl.remove(0);
 				saveAs(new File(listToString(sl, " ")));
 			}
 		} else if (line.startsWith("open")) {
-			String[] split = line.split(" ");
+			final String[] split = line.split(" ");
 			String filename = null;
 			try {
 				filename = split[1];
@@ -113,18 +114,17 @@ public final class DzEdit {
 						.println("Must specify filename after command 'open'");
 			}
 			if (filename != null) {
-				List<String> sl = new ArrayList<>(Arrays.asList(split));
+				final List<String> sl = new ArrayList<>(Arrays.asList(split));
 				sl.remove(0);
 				open(new File(listToString(sl, " ")));
 			}
 		}
-
 		listenForCommands(scanner);
 	}
 
-	public void open(File open) {
-		List<String> lines = readLines(open);
-		StringBuilder sb = new StringBuilder();
+	private void open(final File open) {
+		final List<String> lines = readLines(open);
+		final StringBuilder sb = new StringBuilder();
 		for (String line : lines) {
 			sb.append(line).append("\n");
 		}
@@ -132,18 +132,16 @@ public final class DzEdit {
 		opened = open;
 		defDir = open.getParentFile();
 		if (defDir == null) {
-			System.out.println("lol");
 			defDir = new File("./");
 		}
-
 		System.out.println("Opened file: " + opened.getName());
 	}
 
-	public void save() {
+	private void save() {
 		saveAs(opened);
 	}
 
-	public void saveAs(File destination) {
+	private void saveAs(final File destination) {
 		if (!writeFile(destination, jta.getText())) {
 			System.out.println("ERROR: COULD NOT SAVE FILE");
 		} else {
@@ -156,16 +154,16 @@ public final class DzEdit {
 		new DzEdit();
 	}
 
-	private String listToString(List<String> list, String separator) {
-		StringBuilder sb = new StringBuilder();
+	private String listToString(final List<String> list, final String separator) {
+		final StringBuilder sb = new StringBuilder();
 		for (String string : list) {
 			sb.append(string).append(separator);
 		}
 		return sb.toString();
 	}
 
-	private static List<String> readLines(File f) {
-		List<String> result = new ArrayList<String>();
+	private static List<String> readLines(final File f) {
+		final List<String> result = new ArrayList<String>();
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(f));
@@ -186,7 +184,7 @@ public final class DzEdit {
 		return result;
 	}
 
-	private static boolean writeFile(File out, String contents) {
+	private static boolean writeFile(final File out, final String contents) {
 		if (!out.exists()) {
 			try {
 				out.createNewFile();
