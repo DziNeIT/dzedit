@@ -37,7 +37,6 @@ import javax.swing.JTextArea;
 public final class DzEdit {
 	private File opened;
 	private File defDir;
-	private Font ubuntuL;
 	private JFrame frame;
 	private Container cp;
 	private JTextArea jta;
