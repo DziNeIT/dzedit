@@ -2,6 +2,12 @@ package dzedit;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,22 +20,50 @@ import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 
+/**
+ * The worst text editor ever:
+ * 
+ * - Works via command line commands to open and save files! - Only has support
+ * for editing one file at a time! - Extremely badly written!
+ * 
+ * TODO: Add functionality to the bar at the top lol
+ */
 public final class DzEdit {
 	private File opened;
+	private File defDir;
+	private Font ubuntuL;
 	private JFrame frame;
 	private Container cp;
 	private JTextArea jta;
+	private JMenuBar mb;
+	private JMenu jm;
 
+	/**
+	 * Create a new DzEdit... Although I don't see why you'd want to
+	 */
 	private DzEdit() {
 		frame = new JFrame("DzEdit");
 		cp = frame.getContentPane();
-		frame.setLocationRelativeTo(null);
+		mb = new JMenuBar();
+		jm = new JMenu("File");
+		mb.add(jm);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		cp.add(jta = new JTextArea(), BorderLayout.CENTER);
 
+		frame.setMinimumSize(new Dimension(600, 400));
+		frame.setPreferredSize(new Dimension(800, 600));
+		mb.setPreferredSize(new Dimension(800, 25));
+		jm.setVisible(true);
+
+		frame.setLocationRelativeTo(null);
+		frame.setJMenuBar(mb);
 		frame.setResizable(true);
 		frame.pack();
 		frame.setVisible(true);
@@ -44,6 +78,12 @@ public final class DzEdit {
 		System.exit(0);
 	}
 
+	/**
+	 * Listens for commands. Executes commands. Repeats.
+	 * 
+	 * @param scanner
+	 *            The scanner for scanning
+	 */
 	private void listenForCommands(Scanner scanner) {
 		String line = scanner.nextLine();
 		if (line.equalsIgnoreCase("close")) {
@@ -91,16 +131,17 @@ public final class DzEdit {
 		}
 		jta.setText(sb.toString());
 		opened = open;
+		defDir = open.getParentFile();
+		if (defDir == null) {
+			System.out.println("lol");
+			defDir = new File("./");
+		}
 
 		System.out.println("Opened file: " + opened.getName());
 	}
 
 	public void save() {
-		if (!writeFile(opened, jta.getText())) {
-			System.out.println("ERROR: COULD NOT SAVE FILE");
-		} else {
-			System.out.println("Saved file: " + opened.getName());
-		}
+		saveAs(opened);
 	}
 
 	public void saveAs(File destination) {
