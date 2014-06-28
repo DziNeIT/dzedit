@@ -192,6 +192,7 @@ public final class DzEdit {
 		final StringBuilder sb = new StringBuilder();
 		for (final String string : list)
 			sb.append(string).append(separator);
+		sb.setLength(sb.length() - separator.length());
 		return sb.toString();
 	}
 
