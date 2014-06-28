@@ -3,9 +3,6 @@ package dzedit;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -19,11 +16,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 /**
@@ -31,39 +29,106 @@ import javax.swing.JTextArea;
  * 
  * - Works via command line commands to open and save files! - Only has support
  * for editing one file at a time! - Extremely badly written!
- * 
- * TODO: Add functionality to the bar at the top lol
  */
 public final class DzEdit {
 	private final JFrame frame;
-	private final Container cp;
-	private final JTextArea jta;
-	private final JMenuBar mb;
-	private final JMenu jm;
+	private final JTextArea textArea;
+
+	// Menu
+	private final JMenuBar menuBar;
+	private final JMenu fileMenu;
+	private final JMenuItem openItem;
+	private final JMenuItem saveItem;
+	private final JMenuItem saveAsItem;
 
 	private File opened;
 	private File defDir;
+	private String lastSaved;
 
 	/**
 	 * Create a new DzEdit... Although I don't see why you'd want to
 	 */
 	private DzEdit() {
 		frame = new JFrame("DzEdit");
-		cp = frame.getContentPane();
-		mb = new JMenuBar();
-		jm = new JMenu("File");
-		mb.add(jm);
+		Container cp = frame.getContentPane();
+
+		menuBar = new JMenuBar();
+		fileMenu = new JMenu("File");
+		openItem = new JMenuItem("Open");
+		saveItem = new JMenuItem("Save");
+		saveAsItem = new JMenuItem("Save As");
+		textArea = new JTextArea();
+
+		fileMenu.setPreferredSize(new Dimension(60, 25));
+		openItem.setPreferredSize(new Dimension(57, 25));
+		saveItem.setPreferredSize(new Dimension(57, 25));
+		saveAsItem.setPreferredSize(new Dimension(57, 25));
+
+		openItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JFileChooser choose = new JFileChooser();
+				int val = choose.showOpenDialog(frame);
+				if (val == JFileChooser.APPROVE_OPTION) {
+					boolean goAhead = true;
+					if (lastSaved != null && textArea.getText() != null
+							&& !lastSaved.equals(textArea.getText())) {
+						final int n = JOptionPane
+								.showOptionDialog(
+										frame,
+										"Do you wish to save before\nopening a new file?",
+										"Open",
+										JOptionPane.YES_NO_CANCEL_OPTION,
+										JOptionPane.QUESTION_MESSAGE, null,
+										new String[] { "Yes", "No", "Cancel" },
+										"Yes");
+						switch (n) {
+						case 0:
+							save();
+							break;
+						case 1:
+							break;
+						case 2:
+							goAhead = false;
+							return;
+						}
+					}
+					open(choose.getSelectedFile());
+				}
+			}
+		});
+
+		saveItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if (!"disabled".equals(event.getActionCommand())) {
+					save();
+				}
+			}
+		});
+
+		saveAsItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JFileChooser choose = new JFileChooser();
+				int val = choose.showOpenDialog(frame);
+				if (val == JFileChooser.APPROVE_OPTION) {
+					saveAs(choose.getSelectedFile());
+				}
+			}
+		});
+
+		menuBar.add(fileMenu);
+		fileMenu.add(openItem);
+		fileMenu.add(saveItem);
+		fileMenu.add(saveAsItem);
+		frame.setJMenuBar(menuBar);
+		cp.add(textArea, BorderLayout.CENTER);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		cp.add(jta = new JTextArea(), BorderLayout.CENTER);
-
 		frame.setMinimumSize(new Dimension(600, 400));
 		frame.setPreferredSize(new Dimension(800, 600));
-		mb.setPreferredSize(new Dimension(800, 25));
-		jm.setVisible(true);
-
 		frame.setLocationRelativeTo(null);
-		frame.setJMenuBar(mb);
 		frame.setResizable(true);
 		frame.pack();
 		frame.setVisible(true);
@@ -128,13 +193,14 @@ public final class DzEdit {
 		for (String line : lines) {
 			sb.append(line).append("\n");
 		}
-		jta.setText(sb.toString());
+		textArea.setText(sb.toString());
 		opened = open;
 		defDir = open.getParentFile();
 		if (defDir == null) {
 			defDir = new File("./");
 		}
 		System.out.println("Opened file: " + opened.getName());
+		lastSaved = textArea.getText();
 	}
 
 	private void save() {
@@ -142,12 +208,14 @@ public final class DzEdit {
 	}
 
 	private void saveAs(final File destination) {
-		if (!writeFile(destination, jta.getText())) {
+		if (!writeFile(destination, textArea.getText())) {
 			System.out.println("ERROR: COULD NOT SAVE FILE");
 		} else {
 			System.out.println("Saved contents to file: "
 					+ destination.getName());
+			open(destination);
 		}
+		lastSaved = textArea.getText();
 	}
 
 	public static void main(String[] args) {
