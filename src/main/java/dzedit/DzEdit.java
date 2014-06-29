@@ -53,9 +53,7 @@ public final class DzEdit {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JFileChooser choose = new JFileChooser();
-				int val = choose.showOpenDialog(frame);
-				if (val == JFileChooser.APPROVE_OPTION) {
-					boolean goAhead = true;
+				if (choose.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 					if (last != null && textArea.getText() != null
 							&& !last.equals(textArea.getText())) {
 						final int n = JOptionPane
@@ -74,7 +72,6 @@ public final class DzEdit {
 						case 1:
 							break;
 						case 2:
-							goAhead = false;
 							return;
 						}
 					}
@@ -95,8 +92,7 @@ public final class DzEdit {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JFileChooser choose = new JFileChooser();
-				int val = choose.showOpenDialog(frame);
-				if (val == JFileChooser.APPROVE_OPTION)
+				if (choose.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
 					saveAs(choose.getSelectedFile());
 			}
 		});
