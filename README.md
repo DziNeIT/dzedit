@@ -1,6 +1,6 @@
 dzedit
 ======
 
-(un)officially the worst text editor ever
+a text editor i made / am making for lols. it basically works and has a bit of gui for opening / saving files.
 
-please don't use this
+put simply, there's no point in using it (although tbf it's probably better than notepad)
