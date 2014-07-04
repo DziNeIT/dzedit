@@ -21,7 +21,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+/**
+ * An open source Java text editor, with the aim of being very simple
+ * 
+ * DzEdit is operable from the command line and by some GUI for loading and
+ * saving files. DzEdit is a work in progress.
+ * 
+ * @author DziNeIT
+ * @see {@link https://github.com/DziNeIT/dzedit}
+ */
 public final class DzEdit {
+	// Components
 	private final JFrame frame;
 	private final JTextArea textArea;
 	private final JMenuBar menuBar;
@@ -29,26 +39,67 @@ public final class DzEdit {
 	private final JMenuItem openItem;
 	private final JMenuItem saveItem;
 	private final JMenuItem saveAsItem;
+	private final JMenu optionsMenu;
+	private final JMenuItem options;
 
+	// Other
 	private File file;
 	private String last;
 
+	/**
+	 * Main constructor for DzEdit. Creates everything, such as the JFrame and
+	 * all its components as well as configuring them, adding their listeners
+	 * and showing them on the screen.
+	 * 
+	 * After this, the constructor runs listenForCommands(), which repeats until
+	 * the user closes the program
+	 */
 	private DzEdit() {
 		frame = new JFrame("DzEdit");
 		final Container cp = frame.getContentPane();
 
+		// Create components
 		menuBar = new JMenuBar();
+
+		// File menu
 		fileMenu = new JMenu("File");
 		openItem = new JMenuItem("Open");
 		saveItem = new JMenuItem("Save");
 		saveAsItem = new JMenuItem("Save As");
-		textArea = new JTextArea();
 
 		fileMenu.setPreferredSize(new Dimension(60, 25));
 		openItem.setPreferredSize(new Dimension(57, 25));
 		saveItem.setPreferredSize(new Dimension(57, 25));
 		saveAsItem.setPreferredSize(new Dimension(57, 25));
 
+		// Options menu
+		optionsMenu = new JMenu("Options");
+		options = new JMenuItem("Options");
+
+		optionsMenu.setPreferredSize(new Dimension(60, 25));
+		options.setPreferredSize(new Dimension(57, 25));
+
+		// Other components
+		textArea = new JTextArea();
+
+		// Add components
+
+		// File menu
+		menuBar.add(fileMenu);
+		fileMenu.add(openItem);
+		fileMenu.add(saveItem);
+		fileMenu.add(saveAsItem);
+
+		// Options menu
+		menuBar.add(optionsMenu);
+		optionsMenu.add(options);
+
+		frame.setJMenuBar(menuBar);
+		cp.add(textArea, BorderLayout.CENTER);
+
+		// Add listeners
+
+		// Opens a GUI for opening files when the 'Open' button is clicked
 		openItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -80,6 +131,7 @@ public final class DzEdit {
 			}
 		});
 
+		// Saves the current file when the 'Save' button is clicked
 		saveItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -88,6 +140,7 @@ public final class DzEdit {
 			}
 		});
 
+		// Opens a GUI for saving files when the 'Save As' button is clicked
 		saveAsItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -97,13 +150,7 @@ public final class DzEdit {
 			}
 		});
 
-		menuBar.add(fileMenu);
-		fileMenu.add(openItem);
-		fileMenu.add(saveItem);
-		fileMenu.add(saveAsItem);
-		frame.setJMenuBar(menuBar);
-		cp.add(textArea, BorderLayout.CENTER);
-
+		// JFrame settings + show the JFrame
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setMinimumSize(new Dimension(600, 400));
 		frame.setPreferredSize(new Dimension(800, 600));
@@ -115,11 +162,18 @@ public final class DzEdit {
 		final Scanner sc = new Scanner(System.in);
 		listenForCommands(sc);
 
+		// Cleanup afterwards
 		sc.close();
 		frame.dispose();
 		System.exit(0);
 	}
 
+	/**
+	 * Listens for commands on a loop
+	 * 
+	 * @param sc
+	 *            The Scanner to listen to
+	 */
 	private void listenForCommands(final Scanner sc) {
 		final String ln = sc.nextLine();
 		if (ln.equalsIgnoreCase("close"))
@@ -158,17 +212,31 @@ public final class DzEdit {
 		listenForCommands(sc);
 	}
 
+	/**
+	 * Opens the specified File to the editor
+	 * 
+	 * @param f
+	 *            The File to open
+	 */
 	private void open(final File f) {
-		textArea.setText(read(f));
-		file = f;
+		textArea.setText(read(file = f));
 		System.out.println("Opened file: " + file.getName());
 		last = textArea.getText();
 	}
 
+	/**
+	 * Saves current file
+	 */
 	private void save() {
 		saveAs(file);
 	}
 
+	/**
+	 * Saves the contents of the current File to the given destination File
+	 * 
+	 * @param destination
+	 *            The File to write the contents to
+	 */
 	private void saveAs(final File destination) {
 		if (!writeFile(destination, textArea.getText()))
 			System.out.println("ERROR: COULD NOT SAVE FILE");
@@ -192,6 +260,14 @@ public final class DzEdit {
 		return sb.toString();
 	}
 
+	/**
+	 * Reads the contents of a File
+	 * 
+	 * @param f
+	 *            The File to read
+	 * 
+	 * @return The contents of the File as a String
+	 */
 	private static String read(final File f) {
 		try {
 			return new String(Files.readAllBytes(f.toPath()));
@@ -200,6 +276,16 @@ public final class DzEdit {
 		}
 	}
 
+	/**
+	 * Writes a String to a File
+	 * 
+	 * @param f
+	 *            The target File to write contents to
+	 * @param s
+	 *            The contents to write to the File
+	 * 
+	 * @return Whether we succeeded in writing the contents to the File
+	 */
 	private static boolean writeFile(final File f, final String s) {
 		try {
 			Files.write(f.toPath(), s.getBytes());
