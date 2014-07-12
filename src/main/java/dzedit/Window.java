@@ -3,6 +3,7 @@ package dzedit;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -31,8 +32,6 @@ public class Window extends JFrame {
     private final JMenuItem openItem;
     private final JMenuItem saveItem;
     private final JMenuItem saveAsItem;
-    private final JMenu optionsMenu;
-    private final JMenuItem options;
 
     Window(final DzEdit main) {
         super("DzEdit");
@@ -54,13 +53,6 @@ public class Window extends JFrame {
         saveItem.setPreferredSize(new Dimension(57, 25));
         saveAsItem.setPreferredSize(new Dimension(57, 25));
 
-        // Options menu
-        optionsMenu = new JMenu("Options");
-        options = new JMenuItem("Options");
-
-        optionsMenu.setPreferredSize(new Dimension(60, 25));
-        options.setPreferredSize(new Dimension(57, 25));
-
         // Other components
         textArea = new JTextArea();
 
@@ -71,10 +63,6 @@ public class Window extends JFrame {
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
         fileMenu.add(saveAsItem);
-
-        // Options menu
-        menuBar.add(optionsMenu);
-        optionsMenu.add(options);
 
         setJMenuBar(menuBar);
         cp.add(textArea, BorderLayout.CENTER);
@@ -100,13 +88,13 @@ public class Window extends JFrame {
                                         new String[] { "Yes", "No", "Cancel" },
                                         "Yes");
                         switch (n) {
-                        case 0:
-                            main.save();
-                            break;
-                        case 1:
-                            break;
-                        case 2:
-                            return;
+                            case 0:
+                                main.save();
+                                break;
+                            case 1:
+                                break;
+                            case 2:
+                                return;
                         }
                     }
                     main.open(choose.getSelectedFile());
@@ -147,5 +135,9 @@ public class Window extends JFrame {
 
     public JTextArea getTextArea() {
         return textArea;
+    }
+
+    public void setTextFont(Font font) {
+        textArea.setFont(font);
     }
 }
