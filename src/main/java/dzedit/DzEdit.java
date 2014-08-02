@@ -65,6 +65,10 @@ public final class DzEdit {
      *            The File to write the contents to
      */
     void saveAs(final File destination) {
+        if (destination == null) {
+            return;
+        }
+
         if (!writeFile(destination, window.getTextArea().getText())) {
             System.out.println("ERROR: COULD NOT SAVE FILE");
         } else {
