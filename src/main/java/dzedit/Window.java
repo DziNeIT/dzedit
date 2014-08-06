@@ -20,6 +20,8 @@ import javax.swing.JTextArea;
  * component related stuff
  */
 public class Window extends JFrame {
+    public static final String BASE_WINDOW_NAME = "DzEdit";
+
     /**
      * The main DzEdit object
      */
@@ -34,7 +36,7 @@ public class Window extends JFrame {
     private final JMenuItem saveAsItem;
 
     Window(final DzEdit main) {
-        super("DzEdit");
+        super(BASE_WINDOW_NAME);
         this.main = main;
 
         final Container cp = getContentPane();

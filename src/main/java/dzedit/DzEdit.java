@@ -1,5 +1,6 @@
 package dzedit;
 
+import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,10 @@ public final class DzEdit {
      */
     private final Window window;
 
+    // Input
+    private Console console;
+    private Scanner scanner;
+
     // Other
     private File file;
     private String last;
@@ -38,11 +43,18 @@ public final class DzEdit {
     private DzEdit() {
         window = new Window(this);
 
-        final Scanner scanner = new Scanner(System.in);
-        listenForCommands(scanner);
+        console = System.console();
+        scanner = null;
+        if (console == null) {
+            scanner = new Scanner(System.in);
+        }
+
+        startListening();
 
         // Cleanup afterwards
-        scanner.close();
+        if (scanner != null) {
+            scanner.close();
+        }
         System.exit(0);
     }
 
@@ -54,7 +66,7 @@ public final class DzEdit {
      */
     void open(final File file) {
         window.getTextArea().setText(read(this.file = file));
-        System.out.println("Opened file: " + file.getName());
+        window.setTitle(Window.BASE_WINDOW_NAME + " - " + file.getAbsolutePath());
         last = window.getTextArea().getText();
     }
 
@@ -70,7 +82,7 @@ public final class DzEdit {
         }
 
         if (!writeFile(destination, window.getTextArea().getText())) {
-            System.out.println("ERROR: COULD NOT SAVE FILE");
+            System.err.println("ERROR: COULD NOT SAVE FILE");
         } else {
             System.out.println("Saved contents to file: "
                     + destination.getName());
@@ -92,10 +104,21 @@ public final class DzEdit {
      * @param scanner
      *            The Scanner to listen to
      */
-    private void listenForCommands(final Scanner scanner) {
-        final String line = scanner.nextLine();
+    private void startListening() {
+        while (listen()) {
+        }
+    }
+
+    /**
+     * Listens for a commands, returning true if the application should continue
+     * to listen or false if the application should terminate
+     * 
+     * @return Whether the application should continue running
+     */
+    private boolean listen() {
+        final String line = getInput();
         if (line.equalsIgnoreCase("close")) {
-            return;
+            return false;
         } else if (line.equalsIgnoreCase("save")) {
             save();
         } else if (line.startsWith("saveas")) {
@@ -127,7 +150,21 @@ public final class DzEdit {
                 open(new File(listToString(list, " ")));
             }
         }
-        listenForCommands(scanner);
+        return true;
+    }
+
+    /**
+     * Gets an input string, using the Console object if it was available at
+     * launch, or the Scanner object if it wasn't
+     * 
+     * @return An input string from the user
+     */
+    private String getInput() {
+        if (console == null) {
+            return scanner.nextLine();
+        } else {
+            return console.readLine();
+        }
     }
 
     /**
