@@ -1,4 +1,4 @@
-package dzedit;
+package pw.ollie.dzedit;
 
 import java.io.File;
 import java.io.IOException;

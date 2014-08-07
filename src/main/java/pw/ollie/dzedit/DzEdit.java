@@ -1,4 +1,4 @@
-package dzedit;
+package pw.ollie.dzedit;
 
 import java.io.Console;
 import java.io.File;
@@ -11,7 +11,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static dzedit.Utilities.*;
+import static pw.ollie.dzedit.Utilities.*;
 
 /**
  * An open source Java text editor, with the aim of being very simple
