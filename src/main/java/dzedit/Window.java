@@ -93,7 +93,12 @@ public class Window extends JFrame {
         newTabItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                new DzEdit().run();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DzEdit().run();
+                    }
+                }).start();
             }
         });
 
