@@ -22,6 +22,7 @@ import static dzedit.Utilities.*;
  */
 public final class DzEdit {
     public static ExecutorService threads = Executors.newCachedThreadPool();
+    public static int curAmount = 0;
 
     /**
      * The Window object, which is a JFrame
@@ -50,6 +51,7 @@ public final class DzEdit {
      * the user closes the program
      */
     public DzEdit() {
+        curAmount++;
         window = new Window(this);
 
         // Initialise input
