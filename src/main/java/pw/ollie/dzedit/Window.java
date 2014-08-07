@@ -33,12 +33,17 @@ public class Window extends JFrame {
     // Components
     private final JTextArea textArea;
     private final JMenuBar menuBar;
+
+    // File
     private final JMenu fileMenu;
     private final JMenuItem newItem;
-    private final JMenuItem newTabItem;
     private final JMenuItem openItem;
     private final JMenuItem saveItem;
     private final JMenuItem saveAsItem;
+
+    // Window
+    private final JMenu windowMenu;
+    private final JMenuItem newTabItem;
 
     private boolean nw = false;
 
@@ -54,36 +59,39 @@ public class Window extends JFrame {
         // File menu
         fileMenu = new JMenu("File");
         newItem = new JMenuItem("New");
-        newTabItem = new JMenuItem("New Tab");
         openItem = new JMenuItem("Open");
         saveItem = new JMenuItem("Save");
         saveAsItem = new JMenuItem("Save As");
 
-        fileMenu.setPreferredSize(new Dimension(60, 25));
-        newItem.setPreferredSize(new Dimension(57, 25));
-        newTabItem.setPreferredSize(new Dimension(57, 25));
-        openItem.setPreferredSize(new Dimension(57, 25));
-        saveItem.setPreferredSize(new Dimension(57, 25));
-        saveAsItem.setPreferredSize(new Dimension(57, 25));
+        fileMenu.setPreferredSize(new Dimension(55, 25));
+        newItem.setPreferredSize(new Dimension(58, 25));
+        openItem.setPreferredSize(new Dimension(58, 25));
+        saveItem.setPreferredSize(new Dimension(58, 25));
+        saveAsItem.setPreferredSize(new Dimension(58, 25));
 
-        // Other components
-        textArea = new JTextArea();
+        // Window menu
+        windowMenu = new JMenu("Window");
+        newTabItem = new JMenuItem("New Tab");
 
-        // Add components
+        windowMenu.setPreferredSize(new Dimension(55, 25));
+        newTabItem.setPreferredSize(new Dimension(58, 25));
 
         // File menu
         menuBar.add(fileMenu);
         fileMenu.add(newItem);
-        fileMenu.add(newTabItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
         fileMenu.add(saveAsItem);
 
+        // Window menu
+        menuBar.add(windowMenu);
+        windowMenu.add(newTabItem);
+
         setJMenuBar(menuBar);
+        textArea = new JTextArea();
         cp.add(textArea, BorderLayout.CENTER);
 
-        // Add listeners
-
+        // Exit if there are no more windows open
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent event) {
@@ -94,6 +102,7 @@ public class Window extends JFrame {
             }
         });
 
+        // Create a blank text area when the 'New' button is clicked
         newItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -103,6 +112,7 @@ public class Window extends JFrame {
             }
         });
 
+        // Create a new window when the 'New Tab' button is clicked
         newTabItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
