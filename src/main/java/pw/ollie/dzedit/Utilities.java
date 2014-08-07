@@ -3,7 +3,6 @@ package pw.ollie.dzedit;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * Static utility methods for DzEdit
