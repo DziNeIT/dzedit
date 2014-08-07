@@ -1,7 +1,6 @@
 package pw.ollie.dzedit;
 
 import java.io.Console;
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
