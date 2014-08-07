@@ -21,6 +21,10 @@ import javax.swing.JTextArea;
  * component related stuff
  */
 public class Window extends JFrame {
+    /**
+     * The base name for the window - the name of the file being edited is
+     * appended to this, with the two separate by ' - '
+     */
     public static final String BASE_WINDOW_NAME = "DzEdit";
 
     /**
@@ -43,10 +47,15 @@ public class Window extends JFrame {
     private final JMenu windowMenu;
     private final JMenuItem newTabItem;
 
+    /**
+     * Whether there has been a new file created. Used to prevent new files
+     * overwriting the previous file when the 'Save' button is clicked
+     */
     private boolean nw = false;
 
     Window(final DzEdit main) {
         super(BASE_WINDOW_NAME);
+        DzEdit.curAmount++;
         this.main = main;
 
         final Container cp = getContentPane();

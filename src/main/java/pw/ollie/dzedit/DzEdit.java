@@ -22,7 +22,17 @@ import static pw.ollie.dzedit.Utilities.*;
  * @see {@link https://github.com/DziNeIT/dzedit}
  */
 public final class DzEdit {
+    /**
+     * The DzEdit thread pool - each window has its own thread in the thread
+     * pool
+     */
     public static ExecutorService threads = Executors.newCachedThreadPool();
+    /**
+     * The amount of windows currently open. Incremented for each construction
+     * of a Window object and decremented when a window is closed. If it is 0
+     * after a window has been closed (i.e there are no windows left open), the
+     * application terminates
+     */
     public static int curAmount = 0;
 
     /**
@@ -52,7 +62,6 @@ public final class DzEdit {
      * the user closes the program
      */
     public DzEdit() {
-        curAmount++;
         window = new Window(this);
 
         // Initialise input
@@ -102,8 +111,7 @@ public final class DzEdit {
         if (!writeFile(destination, window.getTextArea().getText())) {
             System.err.println("ERROR: COULD NOT SAVE FILE");
         } else {
-            System.out.println("Saved contents to file: "
-                    + destination.toString());
+            System.out.println("Saved contents to file: " + destination.toString());
             open(destination);
         }
         last = window.getTextArea().getText();
@@ -136,8 +144,7 @@ public final class DzEdit {
             try {
                 first = split[1];
             } catch (final ArrayIndexOutOfBoundsException e) {
-                System.out
-                        .println("Must specify filename after command 'saveas'");
+                System.out.println("Must specify file after command 'saveas'");
                 return true;
             }
 
@@ -150,14 +157,15 @@ public final class DzEdit {
             try {
                 first = split[1];
             } catch (final ArrayIndexOutOfBoundsException e) {
-                System.out
-                        .println("Must specify filename after command 'open'");
+                System.out.println("Must specify filename after command 'open'");
                 return true;
             }
 
             final List<String> list = new ArrayList<>(Arrays.asList(split));
             list.remove(0);
             open(Paths.get(listToString(list, " ")));
+        } else {
+            System.out.println("That doesn't make sense!");
         }
 
         return true;
@@ -204,6 +212,12 @@ public final class DzEdit {
      *            Command line arguments
      */
     public static void main(String[] args) {
-        new DzEdit().run();
+        // Run DzEdit in a thread in the thread pool
+        threads.submit(new Runnable() {
+            @Override
+            public void run() {
+                new DzEdit().run();
+            }
+        });
     }
 }
