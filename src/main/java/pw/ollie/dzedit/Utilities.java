@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Static utility methods for DzEdit
  */
-public class Utilities {
+public final class Utilities {
     /**
      * Reads the contents of a File
      * 
@@ -63,5 +63,8 @@ public class Utilities {
         }
         sb.setLength(sb.length() - separator.length());
         return sb.toString();
+    }
+
+    private Utilities() {
     }
 }
