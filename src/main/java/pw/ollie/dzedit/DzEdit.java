@@ -63,31 +63,6 @@ public final class DzEdit {
      */
     public DzEdit() {
         window = new Window(this);
-
-        // Initialise input
-        console = System.console();
-        scanner = null;
-        if (console == null) {
-            scanner = new Scanner(System.in);
-        }
-    }
-
-    /**
-     * Run this instance of DzEdit
-     */
-    public void run() {
-        // Listen on a loop
-        startListening();
-
-        // Cleanup afterwards
-        window.dispose();
-        curAmount--;
-        if (scanner != null) {
-            scanner.close();
-        }
-        if (curAmount == 0) {
-            System.exit(0);
-        }
     }
 
     /**
@@ -118,7 +93,6 @@ public final class DzEdit {
         if (!writeFile(destination, window.getTextArea().getText())) {
             System.err.println("ERROR: COULD NOT SAVE FILE");
         } else {
-            System.out.println("Saved contents to file: " + destination.toString());
             open(destination);
         }
         last = window.getTextArea().getText();
@@ -130,62 +104,6 @@ public final class DzEdit {
     public void save() {
         if (!window.newFile()) {
             saveAs(path);
-        }
-    }
-
-    /**
-     * Listens for a commands, returning true if the application should continue
-     * to listen or false if the application should terminate
-     * 
-     * @return Whether the application should continue running
-     */
-    private boolean listen() {
-        final String line = getInput();
-        if (line.equalsIgnoreCase("close") || line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
-            return false;
-        } else if (line.equalsIgnoreCase("save")) {
-            save();
-        } else if (line.startsWith("saveas")) {
-            final String[] split = line.split(" ");
-            String first = null;
-            try {
-                first = split[1];
-            } catch (final ArrayIndexOutOfBoundsException e) {
-                System.out.println("Must specify file after command 'saveas'");
-                return true;
-            }
-
-            final List<String> list = new ArrayList<>(Arrays.asList(split));
-            list.remove(0);
-            saveAs(Paths.get(listToString(list, " ")));
-        } else if (line.startsWith("open")) {
-            final String[] split = line.split(" ");
-            String first = null;
-            try {
-                first = split[1];
-            } catch (final ArrayIndexOutOfBoundsException e) {
-                System.out.println("Must specify filename after command 'open'");
-                return true;
-            }
-
-            final List<String> list = new ArrayList<>(Arrays.asList(split));
-            list.remove(0);
-            open(Paths.get(listToString(list, " ")));
-        } else {
-            System.out.println("That doesn't make sense!");
-        }
-
-        return true;
-    }
-
-    /**
-     * Listens for commands on a loop
-     * 
-     * @param scanner
-     *            The Scanner to listen to
-     */
-    private void startListening() {
-        for (boolean b = true; b; b = listen()) {
         }
     }
 
@@ -223,7 +141,7 @@ public final class DzEdit {
         threads.submit(new Runnable() {
             @Override
             public void run() {
-                new DzEdit().run();
+                new DzEdit();
             }
         });
     }

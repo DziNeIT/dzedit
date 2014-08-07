@@ -126,7 +126,7 @@ public class Window extends JFrame {
                 DzEdit.threads.submit(new Runnable() {
                     @Override
                     public void run() {
-                        new DzEdit().run();
+                        new DzEdit();
                     }
                 });
             }
@@ -180,7 +180,7 @@ public class Window extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser choose = new JFileChooser();
-                if (choose.showOpenDialog(Window.this) == JFileChooser.APPROVE_OPTION) {
+                if (choose.showSaveDialog(Window.this) == JFileChooser.APPROVE_OPTION) {
                     main.saveAs(choose.getSelectedFile().toPath());
                 }
             }
