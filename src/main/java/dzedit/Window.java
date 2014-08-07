@@ -143,7 +143,7 @@ public class Window extends JFrame {
                                 return;
                         }
                     }
-                    main.open(choose.getSelectedFile());
+                    main.open(choose.getSelectedFile().toPath());
                 }
             }
         });
@@ -164,7 +164,7 @@ public class Window extends JFrame {
             public void actionPerformed(ActionEvent event) {
                 JFileChooser choose = new JFileChooser();
                 if (choose.showOpenDialog(Window.this) == JFileChooser.APPROVE_OPTION) {
-                    main.saveAs(choose.getSelectedFile());
+                    main.saveAs(choose.getSelectedFile().toPath());
                 }
             }
         });

@@ -2,6 +2,8 @@ package dzedit;
 
 import java.io.Console;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,9 +36,9 @@ public final class DzEdit {
     private Scanner scanner;
 
     /**
-     * The file which is currently being edited
+     * The path to the file which is currently being edited
      */
-    private File file;
+    private Path path;
     /**
      * The text content of the file the last time it was saved
      */
@@ -79,10 +81,10 @@ public final class DzEdit {
      * @param file
      *            The File to open
      */
-    public void open(final File file) {
-        window.getTextArea().setText(read(this.file = file));
+    public void open(final Path path) {
+        window.getTextArea().setText(read(this.path = path));
         // Put the path to the file in the title of the window
-        window.setTitle(Window.BASE_WINDOW_NAME + " - " + file.getAbsolutePath());
+        window.setTitle(Window.BASE_WINDOW_NAME + " - " + path.toString());
         last = window.getTextArea().getText();
     }
 
@@ -92,7 +94,7 @@ public final class DzEdit {
      * @param destination
      *            The File to write the contents to
      */
-    public void saveAs(final File destination) {
+    public void saveAs(final Path destination) {
         if (destination == null) {
             // Prevents NPE when user hits 'Save' without having a file open
             return;
@@ -102,7 +104,7 @@ public final class DzEdit {
             System.err.println("ERROR: COULD NOT SAVE FILE");
         } else {
             System.out.println("Saved contents to file: "
-                    + destination.getName());
+                    + destination.toString());
             open(destination);
         }
         last = window.getTextArea().getText();
@@ -113,7 +115,7 @@ public final class DzEdit {
      */
     public void save() {
         if (!window.newFile()) {
-            saveAs(file);
+            saveAs(path);
         }
     }
 
@@ -142,7 +144,7 @@ public final class DzEdit {
 
             final List<String> list = new ArrayList<>(Arrays.asList(split));
             list.remove(0);
-            saveAs(new File(listToString(list, " ")));
+            saveAs(Paths.get(listToString(list, " ")));
         } else if (line.startsWith("open")) {
             final String[] split = line.split(" ");
             String first = null;
@@ -156,7 +158,7 @@ public final class DzEdit {
 
             final List<String> list = new ArrayList<>(Arrays.asList(split));
             list.remove(0);
-            open(new File(listToString(list, " ")));
+            open(Paths.get(listToString(list, " ")));
         }
 
         return true;

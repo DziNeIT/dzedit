@@ -3,6 +3,7 @@ package dzedit;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -17,9 +18,9 @@ public class Utilities {
      * 
      * @return The contents of the File as a String
      */
-    public static String read(final File file) {
+    public static String read(final Path path) {
         try {
-            return new String(Files.readAllBytes(file.toPath()));
+            return new String(Files.readAllBytes(path));
         } catch (final IOException e) {
             return null;
         }
@@ -35,9 +36,9 @@ public class Utilities {
      * 
      * @return Whether we succeeded in writing the contents to the File
      */
-    public static boolean writeFile(final File file, final String contents) {
+    public static boolean writeFile(final Path path, final String contents) {
         try {
-            Files.write(file.toPath(), contents.getBytes());
+            Files.write(path, contents.getBytes());
             return true;
         } catch (final IOException e) {
             return false;
