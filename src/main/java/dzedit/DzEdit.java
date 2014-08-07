@@ -28,8 +28,13 @@ public final class DzEdit {
     private Console console;
     private Scanner scanner;
 
-    // Other
+    /**
+     * The file which is currently being edited
+     */
     private File file;
+    /**
+     * The text content of the file the last time it was saved
+     */
     private String last;
 
     /**
@@ -40,15 +45,19 @@ public final class DzEdit {
      * After this, the constructor runs listenForCommands(), which repeats until
      * the user closes the program
      */
-    private DzEdit() {
+    public DzEdit() {
         window = new Window(this);
 
+        // Initialise input
         console = System.console();
         scanner = null;
         if (console == null) {
             scanner = new Scanner(System.in);
         }
+    }
 
+    public void run() {
+        // Listen on a loop
         startListening();
 
         // Cleanup afterwards
@@ -64,8 +73,9 @@ public final class DzEdit {
      * @param file
      *            The File to open
      */
-    void open(final File file) {
+    public void open(final File file) {
         window.getTextArea().setText(read(this.file = file));
+        // Put the path to the file in the title of the window
         window.setTitle(Window.BASE_WINDOW_NAME + " - " + file.getAbsolutePath());
         last = window.getTextArea().getText();
     }
@@ -76,8 +86,9 @@ public final class DzEdit {
      * @param destination
      *            The File to write the contents to
      */
-    void saveAs(final File destination) {
+    public void saveAs(final File destination) {
         if (destination == null) {
+            // Prevents NPE when user hits 'Save' without having a file open
             return;
         }
 
@@ -94,19 +105,8 @@ public final class DzEdit {
     /**
      * Saves current file
      */
-    void save() {
+    public void save() {
         saveAs(file);
-    }
-
-    /**
-     * Listens for commands on a loop
-     * 
-     * @param scanner
-     *            The Scanner to listen to
-     */
-    private void startListening() {
-        while (listen()) {
-        }
     }
 
     /**
@@ -117,7 +117,7 @@ public final class DzEdit {
      */
     private boolean listen() {
         final String line = getInput();
-        if (line.equalsIgnoreCase("close")) {
+        if (line.equalsIgnoreCase("close") || line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
             return false;
         } else if (line.equalsIgnoreCase("save")) {
             save();
@@ -129,12 +129,12 @@ public final class DzEdit {
             } catch (final ArrayIndexOutOfBoundsException e) {
                 System.out
                         .println("Must specify filename after command 'saveas'");
+                return true;
             }
-            if (first != null) {
-                final List<String> list = new ArrayList<>(Arrays.asList(split));
-                list.remove(0);
-                saveAs(new File(listToString(list, " ")));
-            }
+
+            final List<String> list = new ArrayList<>(Arrays.asList(split));
+            list.remove(0);
+            saveAs(new File(listToString(list, " ")));
         } else if (line.startsWith("open")) {
             final String[] split = line.split(" ");
             String first = null;
@@ -143,14 +143,35 @@ public final class DzEdit {
             } catch (final ArrayIndexOutOfBoundsException e) {
                 System.out
                         .println("Must specify filename after command 'open'");
+                return true;
             }
-            if (first != null) {
-                final List<String> list = new ArrayList<>(Arrays.asList(split));
-                list.remove(0);
-                open(new File(listToString(list, " ")));
-            }
+
+            final List<String> list = new ArrayList<>(Arrays.asList(split));
+            list.remove(0);
+            open(new File(listToString(list, " ")));
         }
+
         return true;
+    }
+
+    /**
+     * Listens for commands on a loop
+     * 
+     * @param scanner
+     *            The Scanner to listen to
+     */
+    private void startListening() {
+        for (boolean b = true; b; b = listen()) {
+        }
+    }
+
+    /**
+     * Gets the text content at the last time the file was saved
+     * 
+     * @return Text content of the file the last time we saved
+     */
+    String getLast() {
+        return last;
     }
 
     /**
@@ -168,21 +189,13 @@ public final class DzEdit {
     }
 
     /**
-     * Gets the text content at the last time the file was saved
-     * 
-     * @return Text content of the file the last time we saved
-     */
-    public String getLast() {
-        return last;
-    }
-
-    /**
      * Main method for DzEdit. Just calls the constructor
      * 
      * @param args
      *            Command line arguments
      */
     public static void main(String[] args) {
-        new DzEdit();
+        DzEdit main = new DzEdit();
+        main.run();
     }
 }
