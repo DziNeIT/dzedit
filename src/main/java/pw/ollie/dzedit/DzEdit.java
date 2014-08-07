@@ -40,10 +40,6 @@ public final class DzEdit {
      */
     private final Window window;
 
-    // Input
-    private Console console;
-    private Scanner scanner;
-
     /**
      * The path to the file which is currently being edited
      */
@@ -114,20 +110,6 @@ public final class DzEdit {
      */
     String getLast() {
         return last;
-    }
-
-    /**
-     * Gets an input string, using the Console object if it was available at
-     * launch, or the Scanner object if it wasn't
-     * 
-     * @return An input string from the user
-     */
-    private String getInput() {
-        if (console == null) {
-            return scanner.nextLine();
-        } else {
-            return console.readLine();
-        }
     }
 
     /**
