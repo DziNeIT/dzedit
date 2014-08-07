@@ -44,26 +44,6 @@ public final class Utilities {
         }
     }
 
-    /**
-     * Converts a List of Strings to one String, using the given separator
-     * 
-     * @param list
-     *            The List of Strings to convert into a single String
-     * @param separator
-     *            The character(s) to separate list items by in the String
-     * 
-     * @return The given List in the form of one single String
-     */
-    public static String listToString(final List<String> list,
-            final String separator) {
-        final StringBuilder sb = new StringBuilder();
-        for (final String string : list) {
-            sb.append(string).append(separator);
-        }
-        sb.setLength(sb.length() - separator.length());
-        return sb.toString();
-    }
-
     private Utilities() {
     }
 }
