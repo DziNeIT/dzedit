@@ -13,10 +13,9 @@ import java.util.concurrent.Executors;
 import static pw.ollie.dzedit.Utilities.*;
 
 /**
- * An open source Java text editor, with the aim of being very simple
- * 
- * DzEdit is operable from the command line and by some GUI for loading and
- * saving files. DzEdit is a work in progress.
+ * An open source Java text editor, with the aim of being very simple. DzEdit is
+ * a work in progress. It currently supports opening and saving files, as well
+ * as having multiple open windows
  * 
  * @author DziNeIT
  * @see {@link https://github.com/DziNeIT/dzedit}
