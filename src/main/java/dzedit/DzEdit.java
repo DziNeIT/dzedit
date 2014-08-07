@@ -106,7 +106,9 @@ public final class DzEdit {
      * Saves current file
      */
     public void save() {
-        saveAs(file);
+        if (!window.newFile()) {
+            saveAs(file);
+        }
     }
 
     /**
@@ -195,7 +197,6 @@ public final class DzEdit {
      *            Command line arguments
      */
     public static void main(String[] args) {
-        DzEdit main = new DzEdit();
-        main.run();
+        new DzEdit().run();
     }
 }

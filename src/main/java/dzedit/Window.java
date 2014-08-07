@@ -31,9 +31,13 @@ public class Window extends JFrame {
     private final JTextArea textArea;
     private final JMenuBar menuBar;
     private final JMenu fileMenu;
+    private final JMenuItem newItem;
+    private final JMenuItem newTabItem;
     private final JMenuItem openItem;
     private final JMenuItem saveItem;
     private final JMenuItem saveAsItem;
+
+    private boolean nw = false;
 
     Window(final DzEdit main) {
         super(BASE_WINDOW_NAME);
@@ -46,11 +50,15 @@ public class Window extends JFrame {
 
         // File menu
         fileMenu = new JMenu("File");
+        newItem = new JMenuItem("New");
+        newTabItem = new JMenuItem("New Tab");
         openItem = new JMenuItem("Open");
         saveItem = new JMenuItem("Save");
         saveAsItem = new JMenuItem("Save As");
 
         fileMenu.setPreferredSize(new Dimension(60, 25));
+        newItem.setPreferredSize(new Dimension(57, 25));
+        newTabItem.setPreferredSize(new Dimension(57, 25));
         openItem.setPreferredSize(new Dimension(57, 25));
         saveItem.setPreferredSize(new Dimension(57, 25));
         saveAsItem.setPreferredSize(new Dimension(57, 25));
@@ -62,6 +70,8 @@ public class Window extends JFrame {
 
         // File menu
         menuBar.add(fileMenu);
+        fileMenu.add(newItem);
+        fileMenu.add(newTabItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
         fileMenu.add(saveAsItem);
@@ -70,6 +80,22 @@ public class Window extends JFrame {
         cp.add(textArea, BorderLayout.CENTER);
 
         // Add listeners
+
+        newItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                textArea.setText("");
+                setTitle(BASE_WINDOW_NAME);
+                nw = true;
+            }
+        });
+
+        newTabItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                new DzEdit().run();
+            }
+        });
 
         // Opens a GUI for opening files when the 'Open' button is clicked
         openItem.addActionListener(new ActionListener() {
@@ -139,7 +165,7 @@ public class Window extends JFrame {
         return textArea;
     }
 
-    public void setTextFont(Font font) {
-        textArea.setFont(font);
+    public boolean newFile() {
+        return nw;
     }
 }
