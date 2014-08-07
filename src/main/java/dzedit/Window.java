@@ -39,7 +39,7 @@ public class Window extends JFrame {
 
     private boolean nw = false;
 
-    Window(final DzEdit main) {
+    Window(final DzEdit main, final boolean mainWindow) {
         super(BASE_WINDOW_NAME);
         this.main = main;
 
@@ -93,12 +93,12 @@ public class Window extends JFrame {
         newTabItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                new Thread(new Runnable() {
+                DzEdit.threads.submit(new Runnable() {
                     @Override
                     public void run() {
                         new DzEdit().run();
                     }
-                }).start();
+                });
             }
         });
 
@@ -157,7 +157,7 @@ public class Window extends JFrame {
         });
 
         // JFrame settings + show JFrame
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(mainWindow ? JFrame.EXIT_ON_CLOSE : JFrame.DISPOSE_ON_CLOSE);
         setMinimumSize(new Dimension(600, 400));
         setPreferredSize(new Dimension(800, 600));
         setLocationRelativeTo(null);

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static dzedit.Utilities.*;
 
@@ -19,6 +21,8 @@ import static dzedit.Utilities.*;
  * @see {@link https://github.com/DziNeIT/dzedit}
  */
 public final class DzEdit {
+    public static ExecutorService threads = Executors.newCachedThreadPool();
+
     /**
      * The Window object, which is a JFrame
      */
