@@ -72,15 +72,22 @@ public final class DzEdit {
         }
     }
 
+    /**
+     * Run this instance of DzEdit
+     */
     public void run() {
         // Listen on a loop
         startListening();
 
         // Cleanup afterwards
+        window.dispose();
+        curAmount--;
         if (scanner != null) {
             scanner.close();
         }
-        System.exit(0);
+        if (curAmount == 0) {
+            System.exit(0);
+        }
     }
 
     /**
