@@ -200,8 +200,4 @@ public class Window extends JFrame {
     JTextArea getTextArea() {
         return textArea;
     }
-
-    boolean isNewFile() {
-        return nw;
-    }
 }
