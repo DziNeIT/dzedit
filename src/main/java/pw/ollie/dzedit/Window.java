@@ -120,19 +120,6 @@ public class Window extends JFrame {
             }
         });
 
-        // Create a new window when the 'New Tab' button is clicked
-        newTabItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                DzEdit.threads.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        new DzEdit();
-                    }
-                });
-            }
-        });
-
         // Opens a GUI for opening files when the 'Open' button is clicked
         openItem.addActionListener(new ActionListener() {
             @Override
@@ -187,6 +174,19 @@ public class Window extends JFrame {
             }
         });
 
+        // Create a new window when the 'New Tab' button is clicked
+        newTabItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                DzEdit.threads.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DzEdit();
+                    }
+                });
+            }
+        });
+
         // JFrame settings + show JFrame
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setMinimumSize(new Dimension(600, 400));
@@ -197,11 +197,11 @@ public class Window extends JFrame {
         setVisible(true);
     }
 
-    public JTextArea getTextArea() {
+    JTextArea getTextArea() {
         return textArea;
     }
 
-    public boolean newFile() {
+    boolean isNewFile() {
         return nw;
     }
 }
