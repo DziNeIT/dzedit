@@ -91,22 +91,30 @@ public final class DzEdit {
      * Saves current file
      */
     public void save() {
-        if (!window.newFile()) {
-            saveAs(path);
-        }
+        saveAs(path);
     }
 
     /**
      * Gets the text content at the last time the file was saved
      * 
-     * @return Text content of the file the last time we saved
+     * @return Text content of the file the last time it was saved
      */
     String getLast() {
         return last;
     }
 
     /**
-     * Main method for DzEdit. Just calls the constructor
+     * Called when the user selects the option to create a new, blank file. This
+     * stops new files from overwriting the previously saved file when the
+     * 'Save' button is clicked
+     */
+    void onNewFile() {
+        path = null;
+        last = null;
+    }
+
+    /**
+     * Main method for DzEdit. Creates a new DzEdit window, run in a thread pool
      * 
      * @param args
      *            Command line arguments

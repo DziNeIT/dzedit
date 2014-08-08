@@ -115,6 +115,7 @@ public class Window extends JFrame {
             public void actionPerformed(ActionEvent event) {
                 textArea.setText("");
                 setTitle(BASE_WINDOW_NAME);
+                main.onNewFile();
                 nw = true;
             }
         });
