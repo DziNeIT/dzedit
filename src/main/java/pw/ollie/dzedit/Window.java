@@ -138,14 +138,10 @@ public class Window extends JFrame {
                                         JOptionPane.QUESTION_MESSAGE, null,
                                         new String[] { "Yes", "No", "Cancel" },
                                         "Yes");
-                        switch (n) {
-                            case 0:
-                                main.save();
-                                break;
-                            case 1:
-                                break;
-                            case 2:
-                                return;
+                        if (n == 0) {
+                            main.save();
+                        } else if (n == 2) {
+                            return;
                         }
                     }
                     main.open(choose.getSelectedFile().toPath());
