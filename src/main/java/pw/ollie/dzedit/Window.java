@@ -16,6 +16,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import static javax.swing.JFileChooser.*;
+import static javax.swing.JOptionPane.*;
+
 /**
  * The Window for DzEdit, which is an extension of JFrame. Deals with all
  * component related stuff
@@ -125,19 +128,14 @@ public class Window extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser choose = new JFileChooser();
-                if (choose.showOpenDialog(Window.this) == JFileChooser.APPROVE_OPTION) {
+                if (choose.showOpenDialog(Window.this) == APPROVE_OPTION) {
                     String last = main.getLast();
                     if (last != null && textArea.getText() != null
                             && !last.equals(textArea.getText())) {
-                        final int n = JOptionPane
-                                .showOptionDialog(
-                                        Window.this,
-                                        "Do you wish to save before\nopening a new file?",
-                                        "Open",
-                                        JOptionPane.YES_NO_CANCEL_OPTION,
-                                        JOptionPane.QUESTION_MESSAGE, null,
-                                        new String[] { "Yes", "No", "Cancel" },
-                                        "Yes");
+                        final int n = showOptionDialog(Window.this,
+                                "Do you wish to save before\nopening a new file?",
+                                "Open", YES_NO_CANCEL_OPTION, QUESTION_MESSAGE, null,
+                                new String[] { "Yes", "No", "Cancel" }, "Yes");
                         if (n == 0) {
                             main.save();
                         } else if (n == 2) {
@@ -164,7 +162,7 @@ public class Window extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser choose = new JFileChooser();
-                if (choose.showSaveDialog(Window.this) == JFileChooser.APPROVE_OPTION) {
+                if (choose.showSaveDialog(Window.this) == APPROVE_OPTION) {
                     main.saveAs(choose.getSelectedFile().toPath());
                 }
             }
@@ -184,7 +182,7 @@ public class Window extends JFrame {
         });
 
         // JFrame settings + show JFrame
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setMinimumSize(new Dimension(600, 400));
         setPreferredSize(new Dimension(800, 600));
         setLocationRelativeTo(null);
