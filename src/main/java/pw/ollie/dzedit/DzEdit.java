@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import pw.ollie.dzedit.window.Window;
+
 import static pw.ollie.dzedit.Utilities.*;
 
 /**
@@ -61,10 +63,10 @@ public final class DzEdit {
      *            The File to open
      */
     public void open(final Path path) {
-        window.getTextArea().setText(read(this.path = path));
+        window.getWindowComponents().getTextArea().setText(read(this.path = path));
         // Put the path to the file in the title of the window
         window.setTitle(Window.BASE_WINDOW_NAME + " - " + path.toString());
-        last = window.getTextArea().getText();
+        last = window.getWindowComponents().getTextArea().getText();
     }
 
     /**
@@ -79,12 +81,12 @@ public final class DzEdit {
             return;
         }
 
-        if (!writeFile(destination, window.getTextArea().getText())) {
+        if (!writeFile(destination, window.getWindowComponents().getTextArea().getText())) {
             System.err.println("ERROR: COULD NOT SAVE FILE");
         } else {
             open(destination);
         }
-        last = window.getTextArea().getText();
+        last = window.getWindowComponents().getTextArea().getText();
     }
 
     /**
@@ -99,7 +101,7 @@ public final class DzEdit {
      * 
      * @return Text content of the file the last time it was saved
      */
-    String getLast() {
+    public String getLast() {
         return last;
     }
 
@@ -108,7 +110,7 @@ public final class DzEdit {
      * stops new files from overwriting the previously saved file when the
      * 'Save' button is clicked
      */
-    void onNewFile() {
+    public void onNewFile() {
         path = null;
         last = null;
     }

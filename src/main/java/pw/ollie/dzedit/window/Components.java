@@ -1,40 +1,23 @@
-package pw.ollie.dzedit;
+package pw.ollie.dzedit.window;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+
+import pw.ollie.dzedit.DzEdit;
 
 import static javax.swing.JFileChooser.*;
 import static javax.swing.JOptionPane.*;
 
-/**
- * The Window for DzEdit, which is an extension of JFrame. Deals with all
- * component related stuff
- */
-public class Window extends JFrame {
-    /**
-     * The base name for the window - the name of the file being edited is
-     * appended to this, with the two separate by ' - '
-     */
-    public static final String BASE_WINDOW_NAME = "DzEdit";
-
-    /**
-     * The main DzEdit object
-     */
-    private final DzEdit main;
-
+public class Components {
     // Components
     private final JTextArea textArea;
     private final JMenuBar menuBar;
@@ -50,18 +33,8 @@ public class Window extends JFrame {
     private final JMenu windowMenu;
     private final JMenuItem newTabItem;
 
-    /**
-     * Whether there has been a new file created. Used to prevent new files
-     * overwriting the previous file when the 'Save' button is clicked
-     */
-    private boolean nw = false;
-
-    Window(final DzEdit main) {
-        super(BASE_WINDOW_NAME);
-        DzEdit.curAmount++;
-        this.main = main;
-
-        final Container cp = getContentPane();
+    public Components(final DzEdit main, final Window window) {
+        final Container cp = window.getContentPane();
 
         // Create components
         menuBar = new JMenuBar();
@@ -97,29 +70,18 @@ public class Window extends JFrame {
         menuBar.add(windowMenu);
         windowMenu.add(newTabItem);
 
-        setJMenuBar(menuBar);
+        window.setJMenuBar(menuBar);
         textArea = new JTextArea();
         cp.add(textArea, BorderLayout.CENTER);
-
-        // Exit if there are no more windows open
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent event) {
-                DzEdit.curAmount--;
-                if (DzEdit.curAmount == 0) {
-                    System.exit(0);
-                }
-            }
-        });
 
         // Create a blank text area when the 'New' button is clicked
         newItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 textArea.setText("");
-                setTitle(BASE_WINDOW_NAME);
+                window.setTitle(Window.BASE_WINDOW_NAME);
                 main.onNewFile();
-                nw = true;
+                window.nw = true;
             }
         });
 
@@ -128,11 +90,11 @@ public class Window extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser choose = new JFileChooser();
-                if (choose.showOpenDialog(Window.this) == APPROVE_OPTION) {
+                if (choose.showOpenDialog(window) == APPROVE_OPTION) {
                     String last = main.getLast();
                     if (last != null && textArea.getText() != null
                             && !last.equals(textArea.getText())) {
-                        final int n = showOptionDialog(Window.this,
+                        final int n = showOptionDialog(window,
                                 "Do you wish to save before\nopening a new file?",
                                 "Open", YES_NO_CANCEL_OPTION, QUESTION_MESSAGE, null,
                                 new String[] { "Yes", "No", "Cancel" }, "Yes");
@@ -162,7 +124,7 @@ public class Window extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser choose = new JFileChooser();
-                if (choose.showSaveDialog(Window.this) == APPROVE_OPTION) {
+                if (choose.showSaveDialog(window) == APPROVE_OPTION) {
                     main.saveAs(choose.getSelectedFile().toPath());
                 }
             }
@@ -180,18 +142,41 @@ public class Window extends JFrame {
                 });
             }
         });
-
-        // JFrame settings + show JFrame
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setMinimumSize(new Dimension(600, 400));
-        setPreferredSize(new Dimension(800, 600));
-        setLocationRelativeTo(null);
-        setResizable(true);
-        pack();
-        setVisible(true);
     }
 
-    JTextArea getTextArea() {
+    public JTextArea getTextArea() {
         return textArea;
+    }
+
+    public JMenuBar getMenuBar() {
+        return menuBar;
+    }
+
+    public JMenu getFileMenu() {
+        return fileMenu;
+    }
+
+    public JMenuItem getNewItem() {
+        return newItem;
+    }
+
+    public JMenuItem getOpenItem() {
+        return openItem;
+    }
+
+    public JMenuItem getSaveItem() {
+        return saveItem;
+    }
+
+    public JMenuItem getSaveAsItem() {
+        return saveAsItem;
+    }
+
+    public JMenu getWindowMenu() {
+        return windowMenu;
+    }
+
+    public JMenuItem getNewTabItem() {
+        return newTabItem;
     }
 }
