@@ -20,7 +20,7 @@ public final class Util {
         try {
             return new String(Files.readAllBytes(path));
         } catch (final IOException e) {
-            return null;
+            return new String(e.toString());
         }
     }
 
@@ -40,6 +40,7 @@ public final class Util {
             Files.write(path, contents.getBytes());
             return true;
         } catch (final IOException e) {
+            e.printStackTrace();
             return false;
         }
     }
