@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 
 import pw.ollie.dzedit.window.Window;
 
-import static pw.ollie.dzedit.Utilities.*;
+import static pw.ollie.dzedit.Util.*;
 
 /**
  * An open source Java text editor, with the aim of being very simple. DzEdit is

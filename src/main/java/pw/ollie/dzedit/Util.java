@@ -7,14 +7,14 @@ import java.nio.file.Path;
 /**
  * Static utility methods for DzEdit
  */
-public final class Utilities {
+public final class Util {
     /**
-     * Reads the contents of a File
+     * Reads the contents of the file at the given Path
      * 
-     * @param file
-     *            The File to read
+     * @param path
+     *            The Path to the file to read
      * 
-     * @return The contents of the File as a String
+     * @return The contents of the file located at the given Path as a String
      */
     public static String read(final Path path) {
         try {
@@ -25,14 +25,15 @@ public final class Utilities {
     }
 
     /**
-     * Writes a String to a File
+     * Writes a String to the file at a given Path
      * 
      * @param file
-     *            The target File to write contents to
+     *            The target path to write contents to the file at
      * @param contents
      *            The contents to write to the File
      * 
-     * @return Whether we succeeded in writing the contents to the File
+     * @return Whether we succeeded in writing the contents to the file at the
+     *         given Path
      */
     public static boolean writeFile(final Path path, final String contents) {
         try {
@@ -43,6 +44,6 @@ public final class Utilities {
         }
     }
 
-    private Utilities() {
+    private Util() {
     }
 }
