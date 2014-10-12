@@ -46,18 +46,18 @@ public class Components {
         saveItem = new JMenuItem("Save");
         saveAsItem = new JMenuItem("Save As");
 
-        fileMenu.setPreferredSize(new Dimension(55, 25));
-        newItem.setPreferredSize(new Dimension(58, 25));
-        openItem.setPreferredSize(new Dimension(58, 25));
-        saveItem.setPreferredSize(new Dimension(58, 25));
-        saveAsItem.setPreferredSize(new Dimension(58, 25));
+        fileMenu.setPreferredSize(new Dimension(50, 25));
+        newItem.setPreferredSize(new Dimension(85, 25));
+        openItem.setPreferredSize(new Dimension(85, 25));
+        saveItem.setPreferredSize(new Dimension(85, 25));
+        saveAsItem.setPreferredSize(new Dimension(85, 25));
 
         // Window menu
         windowMenu = new JMenu("Window");
         newTabItem = new JMenuItem("New Tab");
 
-        windowMenu.setPreferredSize(new Dimension(55, 25));
-        newTabItem.setPreferredSize(new Dimension(58, 25));
+        windowMenu.setPreferredSize(new Dimension(50, 25));
+        newTabItem.setPreferredSize(new Dimension(85, 25));
 
         // File menu
         menuBar.add(fileMenu);

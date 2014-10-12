@@ -4,6 +4,9 @@ import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import pw.ollie.dzedit.window.Window;
 
 import static pw.ollie.dzedit.Util.*;
@@ -122,6 +125,18 @@ public final class DzEdit {
      *            Command line arguments
      */
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+
         // Run DzEdit in a thread in the thread pool
         threads.submit(new Runnable() {
             @Override
