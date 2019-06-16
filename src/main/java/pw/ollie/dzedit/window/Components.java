@@ -3,8 +3,6 @@ package pw.ollie.dzedit.window;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -75,73 +73,49 @@ public class Components {
         cp.add(textArea, BorderLayout.CENTER);
 
         // Create a blank text area when the 'New' button is clicked
-        newItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                textArea.setText("");
-                window.setTitle(Window.BASE_WINDOW_NAME);
-                main.onNewFile();
-                window.nw = true;
-            }
+        newItem.addActionListener(event -> {
+            textArea.setText("");
+            window.setTitle(Window.BASE_WINDOW_NAME);
+            main.onNewFile();
+            window.nw = true;
         });
 
         // Opens a GUI for opening files when the 'Open' button is clicked
-        openItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                JFileChooser choose = new JFileChooser();
-                if (choose.showOpenDialog(window) == APPROVE_OPTION) {
-                    String last = main.getLast();
-                    if (last != null && textArea.getText() != null
-                            && !last.equals(textArea.getText())) {
-                        final int n = showOptionDialog(window,
-                                "Do you wish to save before\nopening a new file?",
-                                "Open", YES_NO_CANCEL_OPTION, QUESTION_MESSAGE, null,
-                                new String[] { "Yes", "No", "Cancel" }, "Yes");
-                        if (n == 0) {
-                            main.save();
-                        } else if (n == 2) {
-                            return;
-                        }
+        openItem.addActionListener(event -> {
+            JFileChooser choose = new JFileChooser();
+            if (choose.showOpenDialog(window) == APPROVE_OPTION) {
+                String last = main.getLast();
+                if (last != null && textArea.getText() != null && !last.equals(textArea.getText())) {
+                    final int n = showOptionDialog(window, "Do you wish to save before\nopening a new file?",
+                            "Open", YES_NO_CANCEL_OPTION, QUESTION_MESSAGE, null,
+                            new String[] { "Yes", "No", "Cancel" }, "Yes");
+                    if (n == 0) {
+                        main.save();
+                    } else if (n == 2) {
+                        return;
                     }
-                    main.open(choose.getSelectedFile().toPath());
                 }
+                main.open(choose.getSelectedFile().toPath());
             }
         });
 
         // Saves the current file when the 'Save' button is clicked
-        saveItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (!"disabled".equals(event.getActionCommand())) {
-                    main.save();
-                }
+        saveItem.addActionListener(event -> {
+            if (!"disabled".equals(event.getActionCommand())) {
+                main.save();
             }
         });
 
         // Opens a GUI for saving files when the 'Save As' button is clicked
-        saveAsItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                JFileChooser choose = new JFileChooser();
-                if (choose.showSaveDialog(window) == APPROVE_OPTION) {
-                    main.saveAs(choose.getSelectedFile().toPath());
-                }
+        saveAsItem.addActionListener(event -> {
+            JFileChooser choose = new JFileChooser();
+            if (choose.showSaveDialog(window) == APPROVE_OPTION) {
+                main.saveAs(choose.getSelectedFile().toPath());
             }
         });
 
         // Create a new window when the 'New Tab' button is clicked
-        newTabItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                DzEdit.threads.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        new DzEdit();
-                    }
-                });
-            }
-        });
+        newTabItem.addActionListener(event -> DzEdit.threads.submit((Runnable) DzEdit::new));
     }
 
     public JTextArea getTextArea() {

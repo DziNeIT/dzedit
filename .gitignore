@@ -1,1 +1,5 @@
 /bin
+*.iml
+*.class
+target/
+.idea/*

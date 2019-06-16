@@ -1,34 +1,19 @@
 package pw.ollie.dzedit.window;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
+import pw.ollie.dzedit.DzEdit;
+
+import javax.swing.JFrame;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-
-import pw.ollie.dzedit.DzEdit;
-
-import static javax.swing.JFileChooser.*;
-import static javax.swing.JOptionPane.*;
-
 /**
- * The Window for DzEdit, which is an extension of JFrame. Deals with all
- * component related stuff
+ * The Window for DzEdit, which is an extension of JFrame. Deals with all component related stuff
  */
 public class Window extends JFrame {
     /**
-     * The base name for the window - the name of the file being edited is
-     * appended to this, with the two separate by ' - '
+     * The base name for the window - the name of the file being edited is appended to this, with the two separate by
+     * ' - '
      */
     public static final String BASE_WINDOW_NAME = "DzEdit";
 
@@ -42,8 +27,8 @@ public class Window extends JFrame {
     private final Components components;
 
     /**
-     * Whether there has been a new file created. Used to prevent new files
-     * overwriting the previous file when the 'Save' button is clicked
+     * Whether there has been a new file created. Used to prevent new files overwriting the previous file when the
+     * 'Save' button is clicked
      */
     boolean nw = false;
 
