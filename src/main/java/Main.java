@@ -1,6 +1,5 @@
 import pw.ollie.dzedit.DzEdit;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -10,11 +9,6 @@ import java.nio.file.Paths;
  */
 public final class Main {
     public static void main(String[] args) {
-        Path target = null;
-        if (args.length > 0) {
-            target = Paths.get(String.join(" ", args));
-        }
-
-        new DzEdit(target);
+        new DzEdit(args.length > 0 ? Paths.get(String.join(" ", args)) : null);
     }
 }
