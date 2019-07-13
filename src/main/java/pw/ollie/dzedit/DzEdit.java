@@ -42,6 +42,7 @@ public final class DzEdit {
     public void open(Path path) {
         EditorTab tab = tab(tabs.size(), path);
         tab.setText(path == null ? "" : Util.read(path));
+        tab.setInitialContent(tab.getText());
         tabs.add(tab);
         window.addTab(tab);
     }
@@ -59,33 +60,36 @@ public final class DzEdit {
         window.removeTab(tab);
     }
 
-    void save(int index) {
+    boolean save(int index) {
         if (index >= tabs.size()) {
-            return;
+            return false;
         }
 
         EditorTab tab = tabs.get(index);
-        save(tab, null);
+        return save(tab, null);
     }
 
-    void save(int index, Path target) {
+    boolean save(int index, Path target) {
         if (index >= tabs.size()) {
-            return;
+            return false;
         }
 
         EditorTab tab = tabs.get(index);
-        save(tab, target);
+        return save(tab, target);
     }
 
-    private void save(EditorTab tab, Path target) {
+    private boolean save(EditorTab tab, Path target) {
         if (target != null) {
             tab.setPath(target);
             tab.setTitle(Util.readableTitle(target));
             window.updateTab(tab);
         }
-        if (tab.getPath() != null) {
-            Util.writeFile(tab.getPath(), tab.getText());
+
+        if (tab.getPath() != null && Util.writeFile(tab.getPath(), tab.getText())) {
+            tab.setInitialContent(tab.getText());
+            return true;
         }
+        return false;
     }
 
     private void update() {
