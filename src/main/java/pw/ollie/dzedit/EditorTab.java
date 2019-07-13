@@ -19,6 +19,10 @@ public final class EditorTab extends JTextArea {
      * The Path of the file open in this tab. May be {@code null}.
      */
     private Path path;
+    /**
+     * Whether the contents of the tab have been modified since last save.
+     */
+    private String initialContent;
 
     EditorTab(int index, String title, Path path) {
         this.index = index;
@@ -40,6 +44,10 @@ public final class EditorTab extends JTextArea {
         return path;
     }
 
+    String getInitialContent() {
+        return initialContent;
+    }
+
     void decrementIndex() {
         index = index - 1;
     }
@@ -50,5 +58,9 @@ public final class EditorTab extends JTextArea {
 
     void setPath(Path path) {
         this.path = path;
+    }
+
+    void setInitialContent(String content) {
+        this.initialContent = content;
     }
 }

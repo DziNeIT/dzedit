@@ -48,6 +48,10 @@ public final class DzEdit {
 
     // internal
 
+    List<EditorTab> tabs() {
+        return new ArrayList<>(tabs);
+    }
+
     void close(int index) {
         EditorTab tab = tabs.get(index);
         IntStream.range(index + 1, tabs.size()).mapToObj(tabs::get).forEach(EditorTab::decrementIndex);

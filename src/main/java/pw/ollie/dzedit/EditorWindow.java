@@ -7,6 +7,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import static javax.swing.JOptionPane.*;
 
 /**
  * The window for the DzEdit editor.
@@ -70,6 +74,31 @@ public final class EditorWindow extends JFrame {
         fileMenu.add(saveAsItem);
         fileMenu.add(closeItem);
         setJMenuBar(menuBar);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                for (EditorTab tab : editor.tabs()) {
+                    if (tab.getText().equals(tab.getInitialContent())) {
+                        continue;
+                    }
+
+                    if (showOptionDialog(EditorWindow.this, "Do you wish to save\n" + tab.getTitle() + "?",
+                            "Save", YES_NO_OPTION, QUESTION_MESSAGE, null, new String[]{"Yes", "No"}, "Yes") != 0) {
+                        continue;
+                    }
+
+                    if (tab.getPath() != null) {
+                        editor.save(tab.getIndex());
+                    } else {
+                        JFileChooser choose = new JFileChooser();
+                        if (choose.showSaveDialog(EditorWindow.this) == JFileChooser.APPROVE_OPTION) {
+                            editor.save(tab.getIndex(), choose.getSelectedFile().toPath());
+                        }
+                    }
+                }
+            }
+        });
     }
 
     // internal
