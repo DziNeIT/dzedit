@@ -1,125 +1,94 @@
 package pw.ollie.dzedit;
 
-import pw.ollie.dzedit.window.Window;
-
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import java.nio.file.Path;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static pw.ollie.dzedit.Util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 
 /**
- * An open source Java text editor, with the aim of being very simple. DzEdit is a work in progress. It currently
- * supports opening and saving files, as well as having multiple open windows
- *
- * @author DziNeIT
+ * Main controller class for DzEdit.
  */
 public final class DzEdit {
     /**
-     * The DzEdit thread pool - each window has its own thread in the thread pool
+     * The DzEdit window (a JFrame).
      */
-    public static ExecutorService threads = Executors.newCachedThreadPool();
+    private final EditorWindow window;
     /**
-     * The amount of windows currently open. Incremented for each construction of a Window object and decremented when a
-     * window is closed. If it is 0 after a window has been closed (i.e there are no windows left open), the application
-     * terminates
+     * All currently open tabs.
      */
-    public static int curAmount = 0;
+    private final List<EditorTab> tabs;
 
     /**
-     * The Window object, which is a JFrame
+     * Creates a new DzEdit and corresponding {@link EditorWindow}, with one tab - the given file, or an empty tab if
+     * the given {@link Path} is {@code null}.
+     *
+     * @param target the Path to the initial file to open
      */
-    private final Window window;
+    public DzEdit(Path target) {
+        window = new EditorWindow(this);
+        tabs = new ArrayList<>();
+        tabs.add(tab(0, target));
 
-    /**
-     * The path to the file which is currently being edited
-     */
-    private Path path;
-    /**
-     * The text content of the file the last time it was saved
-     */
-    private String last;
-
-    /**
-     * Main constructor for DzEdit. Creates the Window object, which in turn creates all of the components and changes
-     * their settings when it is created
-     * <p>
-     * After this, the constructor runs listenForCommands(), which repeats until the user closes the program
-     */
-    public DzEdit() {
-        window = new Window(this);
+        update();
+        window.display();
     }
 
     /**
-     * Opens the specified Path to the editor
+     * Open a new tab in the editor from the file at the given {@link Path}. If {@code null} is provided an empty tab is
+     * created instead.
      *
-     * @param path the Path of the File to open
+     * @param path the Path to the file to open
      */
-    public void open(final Path path) {
-        window.getWindowComponents().getTextArea().setText(read(this.path = path));
-        // Put the path to the file in the title of the window
-        window.setTitle(Window.BASE_WINDOW_NAME + " - " + path.toString());
-        last = window.getWindowComponents().getTextArea().getText();
+    public void open(Path path) {
+        EditorTab tab = tab(tabs.size(), path);
+        tab.setText(path == null ? "" : Util.read(path));
+        tabs.add(tab);
+        window.addTab(tab);
     }
 
-    /**
-     * Saves the contents of the current File to the given destination
-     *
-     * @param destination the Path to the File to write the contents to
-     */
-    public void saveAs(final Path destination) {
-        if (destination == null) {
+    // internal
+
+    void close(int index) {
+        EditorTab tab = tabs.get(index);
+        IntStream.range(index + 1, tabs.size()).mapToObj(tabs::get).forEach(EditorTab::decrementIndex);
+        tabs.remove(tab);
+        window.removeTab(tab);
+    }
+
+    void save(int index) {
+        if (index >= tabs.size()) {
             return;
         }
 
-        if (!writeFile(destination, window.getWindowComponents().getTextArea().getText())) {
-            System.err.println("ERROR: COULD NOT SAVE FILE");
-        } else {
-            open(destination);
-        }
-        last = window.getWindowComponents().getTextArea().getText();
+        EditorTab tab = tabs.get(index);
+        save(tab, null);
     }
 
-    /**
-     * Saves current file
-     */
-    public void save() {
-        saveAs(path);
-    }
-
-    /**
-     * Gets the text content at the last time the file was saved
-     *
-     * @return text content of the file the last time it was saved
-     */
-    public String getLast() {
-        return last;
-    }
-
-    /**
-     * Called when the user selects the option to create a new, blank file. This stops new files from overwriting the
-     * previously saved file when the 'Save' button is clicked
-     */
-    public void onNewFile() {
-        path = null;
-        last = null;
-    }
-
-    /**
-     * Main method for DzEdit. Creates a new DzEdit window, run in a thread pool
-     *
-     * @param args command line arguments
-     */
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
+    void save(int index, Path target) {
+        if (index >= tabs.size()) {
+            return;
         }
 
-        // Run DzEdit in a thread in the thread pool
-        threads.submit((Runnable) DzEdit::new);
+        EditorTab tab = tabs.get(index);
+        save(tab, target);
+    }
+
+    private void save(EditorTab tab, Path target) {
+        if (target != null) {
+            tab.setPath(target);
+            tab.setTitle(Util.readableTitle(target));
+            window.updateTab(tab);
+        }
+        if (tab.getPath() != null) {
+            Util.writeFile(tab.getPath(), tab.getText());
+        }
+    }
+
+    private void update() {
+        tabs.stream().filter(Util.negate(window::hasTab)).forEach(window::addTab);
+    }
+
+    private EditorTab tab(int index, Path path) {
+        return new EditorTab(index, path == null ? "new" : Util.readableTitle(path), path);
     }
 }
